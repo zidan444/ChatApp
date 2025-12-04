@@ -17,10 +17,10 @@ export const createMessage = async (req, res) => {
     });
 
     const fullMessage = await Message.findById(message._id)
-      .populate('sender', 'name email avatarUrl')
+      .populate('sender', 'name email avatar')
       .populate({
         path: 'chat',
-        populate: { path: 'participants', select: 'name email avatarUrl' },
+        populate: { path: 'participants', select: 'name email avatar' },
       });
 
     await Chat.findByIdAndUpdate(chatId, {
@@ -48,7 +48,7 @@ export const getMessagesForChat = async (req, res) => {
 
   try {
     const messages = await Message.find({ chat: chatId })
-      .populate('sender', 'name email avatarUrl')
+      .populate('sender', 'name email avatar')
       .sort({ createdAt: 1 });
 
     res.json(messages);

@@ -9,7 +9,7 @@ export const searchUsers = createAsyncThunk(
     if (!token) return rejectWithValue("Not authenticated");
     try {
       const { data } = await axios.get(
-        `${API_BASE_URL}/api/users?search=${encodeURIComponent(query)}`,
+        `${API_BASE_URL}/api/users?q=${encodeURIComponent(query)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -17,7 +17,7 @@ export const searchUsers = createAsyncThunk(
         }
       );
       return data; // array of users
-    } catch (err) {
+    } catch {
       return rejectWithValue("Failed to search users");
     }
   }

@@ -3,7 +3,7 @@ import User from '../models/user.js';
 import generateToken from '../utils/generateToken.js';
 
 export const registerUser = async (req, res) => {
-  const { name, email, password, avatarUrl } = req.body;
+  const { name, email, password, avatar } = req.body;
 
   try {
     const existing = await User.findOne({ email });
@@ -18,7 +18,7 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password: hashed,
-      avatarUrl,
+      avatar,
     });
 
     user.lastSeen = new Date();
@@ -31,7 +31,7 @@ export const registerUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        avatarUrl: user.avatarUrl,
+        avatar: user.avatar,
       },
       token,
     });
@@ -62,7 +62,7 @@ export const loginUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        avatarUrl: user.avatarUrl,
+        avatar: user.avatar,
         lastSeen: user.lastSeen,
       },
       token,
