@@ -217,6 +217,22 @@ const ChatPage = () => {
     }
   }, [showUpdateGroupModal]);
 
+  useEffect(() => {
+    if (showGroupInfo && selectedChat && selectedChat._id) {
+      (async () => {
+        const res = await dispatch(fetchChats());
+        if (fetchChats.fulfilled.match(res)) {
+          const updated = (res.payload || []).find(
+            (c) => c._id === selectedChat._id
+          );
+          if (updated) {
+            dispatch(setSelectedChat(updated));
+          }
+        }
+      })();
+    }
+  }, [showGroupInfo]);
+
   // log group chats to confirm shapes
   useEffect(() => {
     const groupChats = chats.filter((c) => c.isGroup);
@@ -378,6 +394,18 @@ const ChatPage = () => {
       setGlobalError(res.payload || "Failed to delete group.");
     } else {
       setShowGroupInfo(false);
+    }
+  };
+
+  const handleMakeAdmin = async (userId) => {
+    if (!selectedChat || !selectedChat.isGroup) return;
+    const res = await dispatch(
+      addGroupAdmin({ chatId: selectedChat._id, userId })
+    );
+    if (!addGroupAdmin.fulfilled.match(res)) {
+      setGlobalError(res.payload || "Failed to add admin.");
+    } else {
+      setGlobalError(null);
     }
   };
 
@@ -1362,6 +1390,9 @@ const ChatPage = () => {
             const requesterIsAdmin =
               getGroupAdminId(selectedChat) === currentUserId ||
               isCoAdmin(selectedChat, currentUserId);
+            const isMember = (selectedChat.participants || []).some(
+              (p) => getEntityId(p) === userId
+            );
 
             return (
               <div
@@ -1383,15 +1414,11 @@ const ChatPage = () => {
                     <div className="member-email">{u.email}</div>
                   </div>
                 </div>
-                {requesterIsAdmin && !isYou && !(isAdmin || coAdmin) && (
+                {requesterIsAdmin && userId && isMember && !isYou && !(isAdmin || coAdmin) && (
                   <button
                     type="button"
                     className="member-remove-btn"
-                    onClick={() =>
-                      dispatch(
-                        addGroupAdmin({ chatId: selectedChat._id, userId })
-                      )
-                    }
+                    onClick={() => handleMakeAdmin(userId)}
                   >
                     Make admin
                   </button>

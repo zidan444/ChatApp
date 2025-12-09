@@ -89,3 +89,8 @@ export const updateMe = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// create a login controller with email validation, bcrypt compare and jwt token
+
+

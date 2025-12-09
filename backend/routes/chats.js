@@ -25,8 +25,8 @@ router.put('/group/remove-user', protect, removeFromGroup);
 router.put('/group/add-user', protect, addToGroup);
 router.put('/group/avatar', protect, updateGroupAvatar);
 router.post('/group/leave', protect, leaveGroup);
+router.put('/group/add-admin', protect, addAdminToGroup);
 router.delete('/group/:chatId', protect, deleteGroup);
 router.put('/group/:chatId', protect, updateMember);
-router.put('/group/add-admin', protect, addAdminToGroup);
 
 export default router;

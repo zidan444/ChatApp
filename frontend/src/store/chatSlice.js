@@ -141,12 +141,14 @@ export const addGroupAdmin = createAsyncThunk(
   async ({ chatId, userId }, { getState, rejectWithValue }) => {
     const token = getState().auth.token;
     if (!token) return rejectWithValue("Not authenticated");
+
     try {
       const { data } = await axios.put(
         `${API_BASE_URL}/api/chats/group/add-admin`,
         { chatId, userId },
         getAuthConfig(token)
       );
+
       return data;
     } catch (err) {
       return rejectWithValue(
@@ -155,6 +157,7 @@ export const addGroupAdmin = createAsyncThunk(
     }
   }
 );
+
 
 export const renameGroup = createAsyncThunk(
   "chat/renameGroup",
