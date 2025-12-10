@@ -17,12 +17,31 @@ connectDB();
 
 const app = express();
 
+<<<<<<< HEAD
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
+=======
+const allowedOrigins = process.env.CLIENT_URL.split(",");
+
+app.use(
+  cors({
+    origin: function(origin, callback){
+      // allow requests with no origin (Postman, curl)
+      if(!origin) return callback(null, true);
+      if(allowedOrigins.indexOf(origin) === -1){
+        return callback(new Error("Not allowed by CORS"), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
+
+>>>>>>> f047b20 (w)
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
@@ -30,7 +49,11 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
+<<<<<<< HEAD
     origin: process.env.CLIENT_URL,
+=======
+    origin: allowedOrigins,
+>>>>>>> f047b20 (w)
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -50,6 +73,10 @@ app.get("/debug/headers", (req, res) => {
     headers: req.headers,
   })
 })
+<<<<<<< HEAD
+=======
+
+>>>>>>> f047b20 (w)
 // userId -> [socketIds]
 const onlineUsers = new Map();
 // socketId -> userId
