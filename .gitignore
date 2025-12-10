@@ -1,0 +1,36 @@
+# Root .gitignore for ChatApp
+
+# Environment secrets (do NOT commit)
+.env
+.env.*
+frontend/.ENV
+backend/.ENV
+frontend/.env
+backend/.env
+
+# Node modules
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Build outputs
+dist/
+build/
+frontend/dist/
+backend/dist/
+
+# Logs and caches
+*.log
+logs/
+.cache/
+
+# IDE/editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
