@@ -56,6 +56,14 @@ app.use("/api/users", userRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
 
+app.get("/", (req, res) => {
+  res.json({ ok: true, service: "ChatApp API", time: new Date().toISOString() });
+});
+
+app.get("/healthz", (req, res) => {
+  res.status(200).send("ok");
+});
+
 app.get("/debug/headers", (req, res) => {
   res.json({
     authorization: req.headers.authorization || null,
