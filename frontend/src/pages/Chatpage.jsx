@@ -916,19 +916,22 @@ const ChatPage = () => {
                       const isOwn =
                         getEntityId(msg.sender) === currentUserId;
                       const isGroup = selectedChat.isGroup;
-                      const showSenderName = isGroup && !isOwn;
+                      const showAvatar = isGroup && !isOwn;
 
                       return (
                         <div
                           key={`${msg._id}-${index}`}
                           className={`message-row ${isOwn ? "own" : "other"}`}
+                          style={showAvatar ? { alignItems: "flex-end", gap: "8px" } : {}}
                         >
-                    <div className="message-bubble rounded-2xl shadow-elev1 ring-1 ring-white/10 backdrop-blur-sm">
-                            {showSenderName && (
-                              <div className="message-sender-name">
-                                {msg.sender.name}
-                              </div>
-                            )}
+                          {showAvatar && (
+                            <Avatar
+                              src={msg.sender?.avatar || null}
+                              fallback={msg.sender?.name?.charAt(0)?.toUpperCase() || "?"}
+                              size={32}
+                            />
+                          )}
+                          <div className="message-bubble rounded-2xl shadow-elev1 ring-1 ring-white/10 backdrop-blur-sm">
                             <div className="message-text">{msg.content}</div>
                             <div className="message-meta">
                               <span>{formatMessageTime(msg.createdAt)}</span>

@@ -617,6 +617,7 @@ body {
 .message-row {
   display: flex;
   margin-bottom: 6px;
+  align-items: flex-end;
 }
 
 .message-row.own {
