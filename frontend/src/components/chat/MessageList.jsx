@@ -27,23 +27,6 @@ const MessageList = ({ messages, currentUserId, loading }) => {
     );
   };
 
-  const isSameSenderMargin = (messages, m, i, userId) => {
-    if (
-      i < messages.length - 1 &&
-      messages[i + 1].sender._id === m.sender._id &&
-      messages[i].sender._id !== userId
-    )
-      return 33;
-    else if (
-      (i < messages.length - 1 &&
-        messages[i + 1].sender._id !== m.sender._id &&
-        messages[i].sender._id !== userId) ||
-      (i === messages.length - 1 && messages[i].sender._id !== userId)
-    )
-      return 0;
-    else return "auto";
-  };
-
   if (loading) {
       return (
           <div className="flex-1 flex items-center justify-center">
@@ -53,14 +36,12 @@ const MessageList = ({ messages, currentUserId, loading }) => {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-1 custom-scrollbar">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col gap-2 custom-scrollbar">
       {messages &&
         messages.map((m, i) => {
           const isOwn = m.sender?._id === currentUserId;
           const senderName = m.sender?.name || "Unknown";
-          
-          // Simplified logic for margin/layout compared to complex original
-          // Using flex-start/end
+          const showAvatar = !isOwn && (isSameSender(messages, m, i, currentUserId) || isLastMessage(messages, i, currentUserId));
           
           return (
             <motion.div
@@ -68,27 +49,29 @@ const MessageList = ({ messages, currentUserId, loading }) => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.2 }}
               key={m._id || i}
-              className={`flex w-full mb-1 message-row ${isOwn ? "justify-end own" : "justify-start other"}`}
+              className={`flex w-full ${isOwn ? "justify-end" : "justify-start"}`}
             >
-                {!isOwn && (isSameSender(messages, m, i, currentUserId) || isLastMessage(messages, i, currentUserId)) ? (
-                     <div className="w-8 mr-2 flex flex-col justify-end">
-                         <Avatar src={m.sender?.avatar} fallback={senderName[0]} size={30} />
+                {!isOwn && (
+                     <div className="w-8 mr-2 flex flex-col justify-end shrink-0">
+                         {showAvatar ? <Avatar src={m.sender?.avatar} fallback={senderName[0]} size={32} /> : <div className="w-8" />}
                      </div>
-                ) : !isOwn && (
-                    <div className="w-8 mr-2"></div>
                 )}
 
-                <div className={`max-w-[75%] sm:max-w-[60%] flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}>
+                <div className={`flex flex-col ${isOwn ? 'items-end' : 'items-start'} max-w-[75%] sm:max-w-[65%]`}>
+                    {!isOwn && showAvatar && (
+                        <span className="text-[10px] text-slate-500 ml-1 mb-1">{senderName}</span>
+                    )}
+
                     <div
-                        className={`message-bubble relative group break-words ${
+                        className={`relative px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm break-words ${
                             isOwn 
-                            ? "own text-white" 
-                            : "other text-slate-200"
+                            ? "bg-[#3b82f6] text-white rounded-tr-sm" 
+                            : "bg-white border border-slate-200 text-slate-800 rounded-tl-sm"
                         }`}
                     >
                         {m.content}
                         
-                         <span className={`text-[9px] ml-2 opacity-60 inline-block align-bottom mt-1 ${isOwn ? 'text-blue-100' : 'text-slate-400'}`}>
+                         <span className={`text-[9px] ml-2 opacity-70 inline-block align-bottom mt-1 ${isOwn ? 'text-blue-100' : 'text-slate-400'}`}>
                              {formatMessageTime(m.createdAt)}
                          </span>
                     </div>

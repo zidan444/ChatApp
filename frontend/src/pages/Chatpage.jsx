@@ -307,103 +307,99 @@ const ChatPage = () => {
     // Logic for toggling views on mobile could be enhanced with a proper hook
     
   return (
-    <div className="h-screen w-full bg-[#020617] text-gray-200 overflow-hidden flex items-center justify-center p-0 lg:p-6 bg-gradient-to-br from-[#0b0e14] to-[#02040a] relative">
-        
-        {/* Background Blobs */}
-        <div className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-900/10 blur-[120px] pointer-events-none" />
-        
-        {/* Main Application Container */}
-        <div className="w-full h-full max-w-[1600px] bg-[#1a1d21]/30 backdrop-blur-3xl rounded-none lg:rounded-[32px] border-0 lg:border border-white/5 shadow-2xl flex overflow-hidden ring-1 ring-white/5 relative z-10">
-            
-            {/* 1. LEFT SIDEBAR */}
-            <div className={`${selectedChat ? 'hidden md:flex' : 'flex'} h-full transition-all duration-300`}>
-                <Sidebar 
-                  user={user}
-                  chats={chats}
-                  selectedChat={selectedChat}
-                  handleSelectChat={handleSelectChat}
-                  searchTerm={searchTerm}
-                  handleSearchChange={handleSearchChange}
-                  searchMode={searchMode}
-                  searchResults={searchResults}
-                  userSearchLoading={userSearchLoading}
-                  onlineUsers={onlineUsers}
-                  accessChat={(id) => {
-                      (async () => {
-                        const res = await dispatch(accessChat(id));
-                        if(accessChat.fulfilled.match(res)) {
-                            handleSelectChat(res.payload);
-                            setSearchMode(false);
-                            setSearchTerm("");
-                            dispatch(clearUserSearch());
-                        }
-                      })()
-                  }}
-                  onLogout={handleLogout}
-                  onOpenGroupModal={() => { setShowGroupModal(true); setSelectedGroupUsers([]); setGroupName(""); }}
+    <div className="h-screen w-full flex overflow-hidden bg-white">
+        {/* 1. LEFT SIDEBAR (Fixed Width) */}
+        <div className={`${selectedChat ? 'hidden md:flex' : 'flex'} w-full md:w-[320px] lg:w-[360px] flex-col bg-[#0f172a] border-r border-[#1e293b]`}>
+            <Sidebar 
+                user={user}
+                chats={chats}
+                selectedChat={selectedChat}
+                handleSelectChat={handleSelectChat}
+                searchTerm={searchTerm}
+                handleSearchChange={handleSearchChange}
+                searchMode={searchMode}
+                searchResults={searchResults}
+                userSearchLoading={userSearchLoading}
+                onlineUsers={onlineUsers}
+                accessChat={(id) => {
+                    (async () => {
+                    const res = await dispatch(accessChat(id));
+                    if(accessChat.fulfilled.match(res)) {
+                        handleSelectChat(res.payload);
+                        setSearchMode(false);
+                        setSearchTerm("");
+                        dispatch(clearUserSearch());
+                    }
+                    })()
+                }}
+                onLogout={handleLogout}
+                onOpenGroupModal={() => { setShowGroupModal(true); setSelectedGroupUsers([]); setGroupName(""); }}
+            />
+        </div>
+
+        {/* 2. CENTER CHAT AREA (Flex Grow) */}
+        <div className={`${selectedChat ? 'flex' : 'hidden md:flex'} flex-1 flex-col bg-[#f8fafc] relative min-w-0`}>
+            {selectedChat ? (
+                <>
+                <ChatHeader 
+                    chat={selectedChat} 
+                    currentUserId={currentUserId} 
+                    onlineUsers={onlineUsers} 
+                    onGroupInfoClick={() => setShowGroupInfo(!showGroupInfo)}
+                    onBack={() => dispatch(setSelectedChat(null))}
                 />
-            </div>
-
-            {/* 2. CENTER CHAT AREA */}
-            <div className={`${selectedChat ? 'flex' : 'hidden md:flex'} flex-1 flex-col bg-transparent relative z-10 transition-all duration-300`}>
-                {selectedChat ? (
-                    <>
-                    <ChatHeader 
-                        chat={selectedChat} 
-                        currentUserId={currentUserId} 
-                        onlineUsers={onlineUsers} 
-                        onGroupInfoClick={() => setShowGroupInfo(true)}
-                        onBack={() => dispatch(setSelectedChat(null))}
-                    />
-                    
-                    <MessageList 
-                        messages={messages} 
-                        currentUserId={currentUserId} 
-                        loading={loadingMessages}
-                    />
-                    
-                    {/* Typing Indicator */}
-                    {isTyping && typingChatId === selectedChat._id && (
-                        <div className="absolute bottom-20 left-6 text-xs text-blue-400 italic animate-pulse">
-                            Someone is typing...
-                        </div>
-                    )}
-                    
-                    {globalError && (
-                        <div className="px-6 pb-2">
-                            <InlineAlert message={globalError} onClose={() => setGlobalError(null)} />
-                        </div>
-                    )}
-
-                    <ChatInput 
-                            messageText={messageText}
-                            setMessageText={setMessageText}
-                            handleSendMessage={handleSendMessage}
-                            handleTyping={handleTyping}
-                            isTyping={isTyping}
-                    />
-                    </>
-                ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-slate-500 opacity-60">
-                        <div className="w-20 h-20 bg-slate-800/50 rounded-full flex items-center justify-center mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-10 h-10">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-                            </svg>
-                        </div>
-                        <p>Select a chat to start messaging</p>
+                
+                <MessageList 
+                    messages={messages} 
+                    currentUserId={currentUserId} 
+                    loading={loadingMessages}
+                />
+                
+                {/* Typing Indicator */}
+                {isTyping && typingChatId === selectedChat._id && (
+                    <div className="absolute bottom-20 left-6 text-xs text-blue-500 italic animate-pulse">
+                        Someone is typing...
                     </div>
                 )}
-            </div>
+                
+                {globalError && (
+                    <div className="px-6 pb-2">
+                        <InlineAlert message={globalError} onClose={() => setGlobalError(null)} />
+                    </div>
+                )}
 
-            {/* 3. RIGHT INFO PANEL */}
-            {selectedChat && (
+                <ChatInput 
+                        messageText={messageText}
+                        setMessageText={setMessageText}
+                        handleSendMessage={handleSendMessage}
+                        handleTyping={handleTyping}
+                        isTyping={isTyping}
+                />
+                </>
+            ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-slate-400">
+                    <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 text-slate-300">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-lg font-medium text-slate-600">No Chat Selected</h3>
+                    <p className="max-w-xs text-center mt-2">Select a conversation from the sidebar to start chatting</p>
+                </div>
+            )}
+        </div>
+
+        {/* 3. RIGHT INFO PANEL (Collapsible, Fixed Width) */}
+        {selectedChat && showGroupInfo && (
+            <div className="w-[300px] border-l border-slate-200 bg-white hidden lg:block overflow-y-auto">
                 <RightPanel 
                     chat={selectedChat}
                     currentUserId={currentUserId}
                     onlineUsers={onlineUsers}
                 />
-            )}
-        </div>
+            </div>
+        )}
+
 
         {/* --- MODALS --- */}
         <input

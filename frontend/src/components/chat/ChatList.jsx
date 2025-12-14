@@ -59,20 +59,19 @@ const ChatList = ({
   };
 
   if (searchMode) {
-      if(userSearchLoading) return <p className="text-slate-500 text-center mt-10 text-sm">Searching users...</p>;
-      if(searchResults.length === 0) return <p className="text-slate-500 text-center mt-10 text-sm">No users found</p>;
+      if(userSearchLoading) return <p className="text-[#64748b] text-center mt-10 text-sm">Searching users...</p>;
+      if(searchResults.length === 0) return <p className="text-[#64748b] text-center mt-10 text-sm">No users found</p>;
 
       return (
-        <motion.div variants={containerVariants} initial="hidden" animate="show" className="flex flex-col p-2 gap-1 overflow-y-auto">
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="flex flex-col gap-1 overflow-y-auto">
           {searchResults.map((u) => {
                const candidateId = getEntityId(u);
                const isSelected = isUpdateGroupModalOpen
                  ? currentGroupMembers.some((x) => getEntityId(x) === candidateId)
                  : isGroupModalOpen 
                  ? selectedGroupUsers.some((x) => getEntityId(x) === candidateId)
-                 : false; // Not applicable for regular selection
+                 : false; 
             
-               // Determine click handler based on context
                let onClickHandler;
                if (isGroupModalOpen) onClickHandler = () => toggleUserInGroup(u);
                else if (isUpdateGroupModalOpen) onClickHandler = () => toggleUserInUpdateGroup(u);
@@ -84,14 +83,14 @@ const ChatList = ({
                     key={candidateId}
                     variants={itemVariants}
                     onClick={onClickHandler}
-                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border border-transparent hover:bg-white/5 ${isSelected ? 'bg-blue-500/10 border-blue-500/30' : ''}`}
+                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border border-transparent ${isSelected ? 'bg-[#3b82f6]/10 border-[#3b82f6]/30' : 'hover:bg-[#1e293b]'}`}
                   >
                     <Avatar src={u.avatar} fallback={u.name?.charAt(0).toUpperCase()} size={40} />
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-slate-200 text-sm truncate">{u.name}</div>
-                      <div className="text-xs text-slate-500 truncate">{u.email}</div>
+                      <div className="font-medium text-[#f1f5f9] text-sm truncate">{u.name}</div>
+                      <div className="text-xs text-[#64748b] truncate">{u.email}</div>
                     </div>
-                     {isSelected && <span className="text-blue-400 text-xs font-bold">Selected</span>}
+                     {isSelected && <span className="text-[#3b82f6] text-xs font-bold">Selected</span>}
                   </motion.div>
                )
           })}
@@ -101,7 +100,7 @@ const ChatList = ({
 
   if (chats.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-48 opacity-50">
+      <div className="flex flex-col items-center justify-center h-48 opacity-50 text-[#64748b]">
           <p className="text-sm">No chats yet</p>
           <p className="text-xs mt-1">Search to find someone</p>
       </div>
@@ -113,7 +112,7 @@ const ChatList = ({
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="flex flex-col p-2 gap-1 overflow-y-auto"
+      className="flex flex-col gap-1 overflow-y-auto pb-20"
     >
       {chats.map((chat) => {
         const { title, primaryOther } = getChatTitleAndUser(chat);
@@ -128,34 +127,33 @@ const ChatList = ({
             onClick={() => handleSelectChat(chat)}
             className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border ${
               isActive 
-                ? "bg-gradient-to-r from-blue-600/20 to-blue-500/10 border-blue-500/30 shadow-md shadow-black/20" 
-                : "border-transparent hover:bg-white/5 hover:border-white/5"
+                ? "bg-[#1e293b] border-[#1e293b] shadow-sm" 
+                : "border-transparent hover:bg-[#1e293b]/50"
             }`}
           >
-            <div className="relative">
+            <div className="relative shrink-0">
                 <Avatar 
                     src={chat.isGroup ? chat.avatar : primaryOther?.avatar} 
                     fallback={displayTitle.charAt(0).toUpperCase()} 
                     size={42} 
                 />
-                {isOnline && <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full"></span>}
+                {isOnline && <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#22c55e] border-2 border-[#0f172a] rounded-full"></span>}
             </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-baseline mb-0.5">
-                <span className={`text-sm font-medium truncate ${isActive ? 'text-white' : 'text-slate-200'}`}>
+                <span className={`text-sm font-medium truncate ${isActive ? 'text-[#f1f5f9]' : 'text-[#e2e8f0]'}`}>
                     {displayTitle}
                 </span>
                 {chat.latestMessage && (
-                  <span className={`text-[10px] shrink-0 ${isActive ? 'text-blue-200' : 'text-slate-500'}`}>
+                  <span className={`text-[10px] shrink-0 ${isActive ? 'text-[#94a3b8]' : 'text-[#64748b]'}`}>
                     {formatMessageTime(chat.latestMessage.createdAt)}
                   </span>
                 )}
               </div>
               
               <div className="flex items-center gap-1.5">
-                 {/* {chat.isGroup && <span className="text-[10px] bg-slate-800 text-slate-400 px-1 rounded">Group</span>} */}
-                 <span className={`text-xs truncate ${isActive ? 'text-blue-200/80' : 'text-slate-500'}`}>
+                 <span className={`text-xs truncate ${isActive ? 'text-[#cbd5e1]' : 'text-[#64748b]'}`}>
                     {chat.latestMessage 
                         ? (
                             <>

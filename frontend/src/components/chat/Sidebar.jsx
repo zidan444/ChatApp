@@ -18,52 +18,57 @@ const Sidebar = ({
   onOpenGroupModal
 }) => {
   return (
-    <div className="flex flex-col w-full md:w-[320px] lg:w-[360px] border-r border-[#ffffff10] bg-[#1a1d21]/50 backdrop-blur-xl h-full">
+    <div className="flex flex-col w-full h-full bg-[#0f172a] text-[#94a3b8] relative">
       {/* App Header */}
-      <div className="p-5 pb-2">
-        <h1 className="text-2xl font-bold text-white tracking-tight mb-4 flex items-center gap-2">
-          CONVO 
-          <span className="text-[10px] align-top text-blue-400">TM</span>
-        </h1>
+      <div className="px-6 pt-6 pb-4 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2 cursor-pointer group hover:text-white transition-colors">
+            <h1 className="text-xl font-bold text-white tracking-wide">
+            CONVO
+            </h1>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 text-[#3b82f6] group-hover:rotate-180 transition-transform duration-300">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+        </div>
+        
+        <button onClick={onOpenGroupModal} className="p-2 -mr-2 text-[#94a3b8] hover:text-white hover:bg-[#1e293b] rounded-full transition-all">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+            </svg>
+        </button>
+      </div>
 
-        {/* Search */}
+      {/* Search */}
+      <div className="px-6 pb-4 shrink-0">
         <div className="relative group">
           <input
             type="text"
-            placeholder="Search user or chat"
+            placeholder="Search..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="w-full bg-[#25282e] border border-transparent focus:border-slate-600 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-300 placeholder:text-slate-500 transition-all outline-none"
+            className="w-full bg-[#1e293b] text-[#f1f5f9] border border-transparent focus:border-[#3b82f6] rounded-xl py-2.5 pl-10 pr-4 text-sm placeholder:text-[#64748b] transition-all outline-none shadow-sm group-hover:bg-[#334155]"
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
+            strokeWidth={2}
             stroke="currentColor"
-            className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500 group-focus-within:text-blue-400 transition-colors"
+            className="w-4 h-4 absolute left-3.5 top-3 text-[#64748b] group-focus-within:text-[#3b82f6] transition-colors"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
           </svg>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar px-3">
-        {/* New / Chats Header */}
-        <div className="flex justify-between items-center px-2 py-2 mt-2 mb-1">
-          <div className="flex items-center gap-2">
-             <span className="text-sm font-medium text-slate-400 hover:text-white cursor-pointer transition-colors">New</span>
-             <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-          </div>
-          <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-md font-medium">{chats.length}</span>
-        </div>
+      <div className="flex-1 overflow-y-auto px-4 custom-scrollbar">
+         {/* Categories / Navigation could go here */}
+         
+         <div className="mb-2 px-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#475569]">
+            <span>Messages</span>
+            <span className="bg-[#1e293b] text-[#94a3b8] py-0.5 px-2 rounded-md">{chats.length}</span>
+         </div>
 
-        {/* Chat List */}
         <ChatList
           chats={chats}
           searchResults={searchResults}
@@ -75,73 +80,23 @@ const Sidebar = ({
           onlineUsers={onlineUsers}
           accessChat={accessChat}
         />
-
-        {/* "People you may know" - Placeholder or Reuse Search Results if empty? 
-            For now, I'll add a static section if no search is active to match the design vibe 
-            or just leave it to ChatList to handle dynamic content
-        */}
-        {!searchMode && (
-             <div className="mt-6 px-2">
-                <h4 className="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">People you may know</h4>
-                {/* Dummy items for visual match if real data isn't available, 
-                    In real app this would map from a 'startups' or 'suggestions' prop 
-                */}
-                <div className="space-y-3 opacity-60 hover:opacity-100 transition-opacity duration-300">
-                    {/* Placeholder content to mimic design */}
-                     <div className="flex items-center justify-between group cursor-pointer">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">W</div>
-                            <span className="text-sm text-slate-400 group-hover:text-slate-200">warren@convo.com</span>
-                        </div>
-                        <button className="text-blue-400 text-lg hover:text-white transition-colors">+</button>
-                     </div>
-                     <div className="flex items-center justify-between group cursor-pointer">
-                        <div className="flex items-center gap-3">
-                             <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs">K</div>
-                            <span className="text-sm text-slate-400 group-hover:text-slate-200">krin@convo.com</span>
-                        </div>
-                        <button className="text-blue-400 text-lg hover:text-white transition-colors">+</button>
-                     </div>
-                </div>
-             </div>
-        )}
       </div>
-
-       {/* Floating Action Button for Create Group (replacing the bottom bar in old design to be cleaner) */}
-       <div className="absolute bottom-6 right-6 md:hidden">
-            <button 
-                onClick={onOpenGroupModal}
-                className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/30 text-white"
-            >
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-               </svg>
-            </button>
-       </div>
        
-       {/* Desktop Create Group Button (Bottom of Sidebar) */}
-       <div className="p-4 border-t border-[#ffffff10] hidden md:block">
-           <button 
-             onClick={onOpenGroupModal}
-             className="w-full py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-medium shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2"
-           >
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-               </svg>
-               Create New Group
-           </button>
-           
-           {/* Current User Small Profile at bottom */}
-           <div className="mt-4 flex items-center justify-between px-1">
-               <div className="flex items-center gap-2">
-                   <Avatar src={user?.avatar} fallback={user?.name?.charAt(0)} size={32} />
+       {/* Footer Profile */}
+       <div className="p-4 border-t border-[#1e293b] bg-[#0f172a] shrink-0">
+           <div className="flex items-center justify-between p-2 rounded-xl hover:bg-[#1e293b] transition-colors cursor-pointer group">
+               <div className="flex items-center gap-3">
+                   <div className="relative">
+                       <Avatar src={user?.avatar} fallback={user?.name?.charAt(0)} size={36} />
+                       <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#0f172a] rounded-full"></span>
+                   </div>
                    <div className="flex flex-col">
-                       <span className="text-xs font-semibold text-slate-200">{user?.name}</span>
-                       <span className="text-[10px] text-slate-500">Online</span>
+                       <span className="text-sm font-semibold text-[#f1f5f9] group-hover:text-white">{user?.name}</span>
+                       <span className="text-xs text-[#64748b]">My Account</span>
                    </div>
                </div>
-               <button onClick={onLogout} className="text-slate-500 hover:text-red-400 transition-colors">
-                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+               <button onClick={onLogout} className="text-[#64748b] hover:text-red-400 p-2 transition-colors">
+                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                    </svg>
                </button>
