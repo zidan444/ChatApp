@@ -581,7 +581,7 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="chat-page-root dark text-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-black">
+    <div className="chat-page-root">
       <input
         type="file"
         accept="image/*"
@@ -589,43 +589,49 @@ const ChatPage = () => {
         style={{ display: "none" }}
         onChange={handleGroupAvatarChange}
       />
-      <div className="chat-window max-w-6xl h-[90vh] grid grid-cols-[320px_1fr] rounded-3xl ring-1 ring-white/10 backdrop-blur-xl shadow-elev2">
+      <div className="chat-window">
         {/* LEFT PANEL */}
-        <aside className="chat-left-panel bg-white/5 backdrop-blur ring-1 ring-white/10">
+        <aside className="chat-left-panel">
           <header className="chat-left-header">
-            <div
-              className="left-user-info"
-              onClick={() => navigate("/profile")}
-              style={{ cursor: "pointer" }}
-            >
-              <div className="left-avatar">
-                <Avatar
-                  src={user?.avatar}
-                  fallback={user?.name?.charAt(0).toUpperCase()}
-                  size={50}
-                />
-              </div>
-              <div>
-                <div className="left-user-name">{user?.name}</div>
-                <div className="left-user-status">
-                  {user?.email}
-                  <span className="status-dot online" />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+              <div
+                className="left-user-info"
+                onClick={() => navigate("/profile")}
+                style={{ cursor: "pointer", flex: 1 }}
+              >
+                <div className="left-avatar">
+                  <Avatar
+                    src={user?.avatar}
+                    fallback={user?.name?.charAt(0).toUpperCase()}
+                    size={50}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div className="left-user-name">{user?.name}</div>
+                  <div className="left-user-phone">{user?.phone || user?.email}</div>
                 </div>
               </div>
+              <button className="notification-bell">
+                🔔
+                <span className="notification-badge"></span>
+              </button>
             </div>
-            <div
-              className="left-header-actions"
-              style={{ display: "flex", gap: 8 }}
-            >
+            <div className="left-action-icons">
+              <button className="left-action-icon" title="Profile">👤</button>
+              <button className="left-action-icon" title="Microphone">🎤</button>
+              <button className="left-action-icon" title="Files">📁</button>
+            </div>
+            <div className="left-header-actions">
               <button
                 style={{
-                  fontSize: 11,
-                  padding: "6px 10px",
-                  borderRadius: 999,
+                  fontSize: 12,
+                  padding: "6px 12px",
+                  borderRadius: 20,
                   border: "none",
                   cursor: "pointer",
-                  background: "rgba(30, 64, 175, 0.9)",
-                  color: "#e5e7eb",
+                  background: "var(--teal)",
+                  color: "#ffffff",
+                  fontWeight: 500,
                 }}
                 onClick={() => {
                   setShowGroupModal(true);
@@ -637,17 +643,17 @@ const ChatPage = () => {
               >
                 + New Group
               </button>
-
               <button
                 className="logout-btn"
                 style={{
-                  fontSize: 11,
-                  padding: "6px 10px",
-                  borderRadius: 999,
+                  fontSize: 12,
+                  padding: "6px 12px",
+                  borderRadius: 20,
                   border: "none",
                   cursor: "pointer",
-                  background: "linear-gradient(135deg, #25d3ee, #0ea5e9)",
-                  color: "#020617",
+                  background: "#f0f0f0",
+                  color: "#333",
+                  fontWeight: 500,
                 }}
                 onClick={handleLogout}
               >
@@ -657,14 +663,15 @@ const ChatPage = () => {
           </header>
 
           <div className="chat-tabs">
-            <button className="chat-tab active">Chats</button>
-            <button className="chat-tab">Contacts</button>
+            <button className="chat-tab active">contacts</button>
+            <button className="chat-tab">groups</button>
           </div>
 
-          <div style={{ padding: "0 12px 8px" }}>
+          <div className="sidebar-search-wrapper">
+            <span className="sidebar-search-icon">🔍</span>
             <input
               type="text"
-              placeholder="Search users or chats"
+              placeholder="Type name to find contact"
               className="sidebar-search"
               value={searchTerm}
               onChange={handleSearchChange}
@@ -781,9 +788,6 @@ const ChatPage = () => {
                             <span className="chat-list-name">
                               {displayTitle}
                             </span>
-                            {isGroup && (
-                              <span className="chat-list-group">Group</span>
-                            )}
                             {chat.latestMessage && (
                               <span className="chat-list-time">
                                 {formatMessageTime(
@@ -794,16 +798,19 @@ const ChatPage = () => {
                           </div>
                           <div className="chat-list-bottom">
                             <span className="chat-list-preview">
-                              {chat.latestMessage
+                              {isTyping && typingChatId === chat._id
+                                ? "typing..."
+                                : chat.latestMessage
                                 ? chat.latestMessage.content
                                 : "Start conversation"}
                             </span>
-                            {!isGroup && (
-                              <span
-                                className={`status-dot ${
-                                  isOnline ? "online" : "offline"
-                                }`}
-                              />
+                            {selectedChat && selectedChat._id === chat._id && (
+                              <span className="chat-list-item-menu">⋮</span>
+                            )}
+                            {chat.unreadCount > 0 && (
+                              <span className="chat-list-unread">
+                                {chat.unreadCount}
+                              </span>
                             )}
                           </div>
                         </div>
@@ -817,7 +824,7 @@ const ChatPage = () => {
         </aside>
 
         {/* RIGHT PANEL */}
-        <main className="chat-right-panel bg-black/30 backdrop-blur-xl ring-1 ring-white/10">
+        <main className="chat-right-panel">
           <InlineAlert
             message={globalError}
             onClose={() => setGlobalError(null)}
@@ -825,12 +832,12 @@ const ChatPage = () => {
           {selectedChat ? (
             <>
               {/* HEADER */}
-              <header className="chat-right-header bg-black/20 backdrop-blur border-b border-white/10">
+              <header className="chat-right-header">
                 {(() => {
                   const { title, primaryOther } =
                     getChatTitleAndUser(selectedChat);
                   const isGroup = selectedChat.isGroup;
-                    const isOnline =
+                  const isOnline =
                     !isGroup &&
                     primaryOther &&
                     onlineUsers.includes(getEntityId(primaryOther));
@@ -839,60 +846,63 @@ const ChatPage = () => {
                     const headerTitle = selectedChat.name || title;
                     const memberCount = selectedChat.participants?.length || 0;
                     
-                     return (
-    <>
-      <div
-        className="right-header-left group-header-clickable"
-        onClick={() => setShowGroupInfo(true)}
-      >
-        <div className="right-avatar">
-          <Avatar
-            src={selectedChat.avatar || null}
-            fallback={headerTitle.charAt(0).toUpperCase()}
-            size={40}
-          />
-        </div>
-        <div>
-          <div className="right-name-row">
-            <span className="right-name">{headerTitle}</span>
-            <span className="group-pill">Group</span>
-          </div>
-          <span className="right-status">
-            {memberCount} member{memberCount === 1 ? "" : "s"}
-          </span>
-        </div>
-      </div>
-
-      {/* Admin actions removed from header; available in side panel */}
-    </>
-  );
-}
+                    return (
+                      <>
+                        <div
+                          className="right-header-left group-header-clickable"
+                          onClick={() => setShowGroupInfo(true)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <div className="right-avatar">
+                            <Avatar
+                              src={selectedChat.avatar || null}
+                              fallback={headerTitle.charAt(0).toUpperCase()}
+                              size={48}
+                            />
+                          </div>
+                          <div>
+                            <div className="right-name-row">
+                              <span className="right-name">{headerTitle}</span>
+                            </div>
+                            <span className="right-phone">
+                              {memberCount} member{memberCount === 1 ? "" : "s"}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="right-header-actions">
+                          <button className="right-header-btn" title="Video call">📹</button>
+                          <button className="right-header-btn" title="Voice call">🎤</button>
+                          <button className="right-header-btn" title="Media">🖼️</button>
+                        </div>
+                      </>
+                    );
+                  }
 
                   return (
-                    <div className="right-header-left">
-                      <div className="right-avatar">
-                        <Avatar
-                          src={primaryOther?.avatar}
-                          fallback={title.charAt(0).toUpperCase()}
-                          size={40}
-                        />
-                      </div>
-                      <div>
-                        <div className="right-name-row">
-                          <span className="right-name">{title}</span>
-                          {isOnline && (
-                            <span className="online-pill">Online</span>
-                          )}
+                    <>
+                      <div className="right-header-left">
+                        <div className="right-avatar">
+                          <Avatar
+                            src={primaryOther?.avatar}
+                            fallback={title.charAt(0).toUpperCase()}
+                            size={48}
+                          />
                         </div>
-                        {!isOnline && (
-                          <span className="right-status">
-                            {primaryOther?.lastSeen
-                              ? formatLastSeen(primaryOther.lastSeen)
-                              : "Last seen recently"}
+                        <div>
+                          <div className="right-name-row">
+                            <span className="right-name">{title}</span>
+                          </div>
+                          <span className="right-phone">
+                            {primaryOther?.phone || primaryOther?.email || ""}
                           </span>
-                        )}
+                        </div>
                       </div>
-                    </div>
+                      <div className="right-header-actions">
+                        <button className="right-header-btn" title="Video call">📹</button>
+                        <button className="right-header-btn" title="Voice call">🎤</button>
+                        <button className="right-header-btn" title="Media">🖼️</button>
+                      </div>
+                    </>
                   );
                 })()}
               </header>
@@ -915,27 +925,25 @@ const ChatPage = () => {
                     {messages.map((msg, index) => {
                       const isOwn =
                         getEntityId(msg.sender) === currentUserId;
-                      const isGroup = selectedChat.isGroup;
-                      const showAvatar = isGroup && !isOwn;
+                      const { primaryOther } = getChatTitleAndUser(selectedChat);
 
                       return (
                         <div
                           key={`${msg._id}-${index}`}
                           className={`message-row ${isOwn ? "own" : "other"}`}
-                          style={showAvatar ? { alignItems: "flex-end", gap: "8px" } : {}}
+                          style={!isOwn ? { alignItems: "flex-start", gap: "8px" } : {}}
                         >
-                          {showAvatar && (
+                          {!isOwn && (
                             <Avatar
-                              src={msg.sender?.avatar || null}
+                              src={msg.sender?.avatar || primaryOther?.avatar || null}
                               fallback={msg.sender?.name?.charAt(0)?.toUpperCase() || "?"}
                               size={32}
                             />
                           )}
-                          <div className="message-bubble rounded-2xl shadow-elev1 ring-1 ring-white/10 backdrop-blur-sm">
+                          <div className="message-bubble">
                             <div className="message-text">{msg.content}</div>
                             <div className="message-meta">
                               <span>{formatMessageTime(msg.createdAt)}</span>
-                              <span>{formatMessageDate(msg.createdAt)}</span>
                             </div>
                           </div>
                         </div>
@@ -943,7 +951,21 @@ const ChatPage = () => {
                     })}
 
                     {isTyping && typingChatId === selectedChat._id && (
-                      <p className="typing-indicator">Typing…</p>
+                      <div className="message-row other" style={{ alignItems: "flex-start", gap: "8px" }}>
+                        {(() => {
+                          const { primaryOther } = getChatTitleAndUser(selectedChat);
+                          return (
+                            <Avatar
+                              src={primaryOther?.avatar || null}
+                              fallback={primaryOther?.name?.charAt(0)?.toUpperCase() || "?"}
+                              size={32}
+                            />
+                          );
+                        })()}
+                        <div className="message-bubble">
+                          <div className="typing-indicator">Typing...</div>
+                        </div>
+                      </div>
                     )}
 
                     <div ref={messagesEndRef} />
@@ -952,15 +974,22 @@ const ChatPage = () => {
               </section>
 
               {/* INPUT */}
-              <form className="chat-bottom-input px-4 py-3 border-t border-white/10 flex gap-2" onSubmit={handleSendMessage}>
+              <form className="chat-bottom-input" onSubmit={handleSendMessage}>
+                <button type="button" className="emoji-btn" title="Emoji">
+                  😊
+                </button>
                 <input
                   type="text"
-                  placeholder="Type your message..."
+                  placeholder="Write a message..."
                   value={messageText}
                   onChange={handleTyping}
-                  className="flex-1 rounded-full bg-white/5 ring-1 ring-white/10 text-slate-200 placeholder:text-slate-400 px-4 py-2 focus:ring-2 focus:ring-blue-400/60 outline-none"
                 />
-                <button type="submit" disabled={!messageText.trim()} className="w-12 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 text-slate-900 shadow-lg hover:-translate-y-0.5 transition">
+                <button 
+                  type="submit" 
+                  disabled={!messageText.trim()} 
+                  className="send-btn"
+                  title="Send"
+                >
                   ➤
                 </button>
               </form>
