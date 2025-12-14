@@ -171,6 +171,12 @@ const ChatPage = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingChatId, setTypingChatId] = useState(null);
   const [globalError, setGlobalError] = useState(null);
+  
+  // Theme state
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('chatAppTheme');
+    return savedTheme === 'dark';
+  });
 
   // group create states
   const [showGroupModal, setShowGroupModal] = useState(false);
@@ -351,6 +357,31 @@ const ChatPage = () => {
   const handleLogout = () => {
     dispatch(logout());
   };
+
+  const toggleTheme = () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    localStorage.setItem('chatAppTheme', newTheme ? 'dark' : 'light');
+    // Apply theme class to root element
+    if (newTheme) {
+      document.documentElement.classList.add('dark-theme');
+      document.documentElement.classList.remove('light-theme');
+    } else {
+      document.documentElement.classList.add('light-theme');
+      document.documentElement.classList.remove('dark-theme');
+    }
+  };
+
+  // Apply theme on mount
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark-theme');
+      document.documentElement.classList.remove('light-theme');
+    } else {
+      document.documentElement.classList.add('light-theme');
+      document.documentElement.classList.remove('dark-theme');
+    }
+  }, [isDarkMode]);
 
   const handleOpenGroupAvatarPicker = () => {
     if (!selectedChat || !selectedChat.isGroup) return;
@@ -581,7 +612,7 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="chat-page-root">
+    <div className={`chat-page-root ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
       <input
         type="file"
         accept="image/*"
@@ -611,9 +642,12 @@ const ChatPage = () => {
                   <div className="left-user-phone">{user?.phone || user?.email}</div>
                 </div>
               </div>
-              <button className="notification-bell">
-                🔔
-                <span className="notification-badge"></span>
+              <button 
+                className="notification-bell theme-toggle-btn" 
+                onClick={toggleTheme}
+                title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {isDarkMode ? "☀️" : "🌙"}
               </button>
             </div>
             <div className="left-action-icons">
