@@ -68,7 +68,7 @@ const MessageList = ({ messages, currentUserId, loading }) => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.2 }}
               key={m._id || i}
-              className={`flex w-full mb-1 ${isOwn ? "justify-end" : "justify-start"}`}
+              className={`flex w-full mb-1 message-row ${isOwn ? "justify-end own" : "justify-start other"}`}
             >
                 {!isOwn && (isSameSender(messages, m, i, currentUserId) || isLastMessage(messages, i, currentUserId)) ? (
                      <div className="w-8 mr-2 flex flex-col justify-end">
@@ -80,10 +80,10 @@ const MessageList = ({ messages, currentUserId, loading }) => {
 
                 <div className={`max-w-[75%] sm:max-w-[60%] flex flex-col ${isOwn ? 'items-end' : 'items-start'}`}>
                     <div
-                        className={`px-4 py-2 rounded-2xl text-[14px] shadow-sm relative group break-words ${
+                        className={`message-bubble relative group break-words ${
                             isOwn 
-                            ? "bg-blue-600 text-white rounded-br-none" 
-                            : "bg-slate-800 text-slate-200 rounded-bl-none border border-slate-700/50"
+                            ? "own text-white" 
+                            : "other text-slate-200"
                         }`}
                     >
                         {m.content}
