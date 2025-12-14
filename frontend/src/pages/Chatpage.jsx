@@ -825,10 +825,6 @@ const ChatPage = () => {
 
         {/* RIGHT PANEL */}
         <main className="chat-right-panel">
-          <InlineAlert
-            message={globalError}
-            onClose={() => setGlobalError(null)}
-          />
           {selectedChat ? (
             <>
               {/* HEADER */}
@@ -909,6 +905,10 @@ const ChatPage = () => {
 
               {/* MESSAGES */}
               <section className="chat-right-body">
+                <InlineAlert
+                  message={globalError}
+                  onClose={() => setGlobalError(null)}
+                />
                 {loadingMessages ? (
                   <p className="muted-text">Loading messages…</p>
                 ) : messages.length === 0 ? (
