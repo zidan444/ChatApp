@@ -653,13 +653,13 @@ body {
   height: 100vh;
   position: relative;
   max-height: 100vh;
+  width: 100%;
 }
 
 .chat-right-header {
   padding: 16px 20px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  flex-shrink: 0;
-  flex-grow: 0;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -667,8 +667,7 @@ body {
   z-index: 10;
   position: relative;
   width: 100%;
-  min-height: fit-content;
-  order: 1;
+  box-sizing: border-box;
 }
 
 .right-header-left {
@@ -747,16 +746,17 @@ body {
 
 /* Messages body, only this scrolls */
 .chat-right-body {
-  flex: 1 1 0;
+  flex: 1 1 0%;
   padding: 10px 18px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
-  max-height: 100%;
+  width: 100%;
+  box-sizing: border-box;
   position: relative;
-  order: 2;
+  height: 0; /* Force flex to calculate height correctly */
 }
 
 /* Show scrollbar for messages */
@@ -896,6 +896,12 @@ body {
   white-space: pre-wrap;
 }
 
+/* Inline alert styling */
+.inline-alert {
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+
 /* Bottom input */
 .chat-bottom-input {
   padding: 16px 20px;
@@ -903,13 +909,12 @@ body {
   display: flex;
   gap: 12px;
   align-items: center;
-  flex-shrink: 0;
-  flex-grow: 0;
+  flex: 0 0 auto;
   background: #ffffff;
   position: relative;
   width: 100%;
   z-index: 10;
-  order: 3;
+  box-sizing: border-box;
 }
 
 .chat-bottom-input input {
