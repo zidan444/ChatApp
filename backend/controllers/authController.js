@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import User from '../models/user.js';
 import generateToken from '../utils/generateToken.js';
 
@@ -22,7 +22,7 @@ export const registerUser = async (req, res) => {
     });
 
     user.lastSeen = new Date();
-    await user.save();
+    user.save().catch(err => console.error('Failed to update lastSeen:', err));
 
     const token = generateToken(user._id);
 
@@ -53,7 +53,7 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
 
     user.lastSeen = new Date();
-    await user.save();
+    user.save().catch(err => console.error('Failed to update lastSeen:', err));
 
     const token = generateToken(user._id);
 

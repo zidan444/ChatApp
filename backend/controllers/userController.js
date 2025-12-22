@@ -1,5 +1,5 @@
 import User from '../models/user.js';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 export const getUsers = async (req, res) => {
   const q = req.query.q || '';
